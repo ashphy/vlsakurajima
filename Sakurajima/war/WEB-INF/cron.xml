@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/sakurajima</url>
+    <description>Get sakurajima uruption data from jma</description>
+    <schedule>every 5 minutes</schedule>
+  </cron>
+</cronentries>
