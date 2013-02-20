@@ -1,12 +1,11 @@
 package com.appspot.vlsakurajima.tweet;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
 
 import com.appspot.vlsakurajima.info.Setting;
+import com.appspot.vlsakurajima.utils.PropertiesUtil;
 
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -94,29 +93,14 @@ public class TwitterHelper {
 	 */
 	public static Twitter getTwitter() {
 		
-		Properties properties = new Properties();
-		InputStream in = null;
-		try{
-			in = TwitterHelper.class.getResourceAsStream("twitter_account.properties");
-			properties.load(in);
-		} catch (IOException e) {
-			return null;
-		} finally {
-			if(in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
+		Properties prop = PropertiesUtil.getProperiesFromResource("/com/appspot/vlsakurajima/tweet/twitter_account.properties");	
+			
 		ConfigurationBuilder confbuilder = new ConfigurationBuilder(); 
 		confbuilder
-			.setOAuthAccessToken(properties.getProperty("token")) 
-			.setOAuthAccessTokenSecret(properties.getProperty("token_secret")) 
-			.setOAuthConsumerKey(properties.getProperty("consumer_key")) 
-			.setOAuthConsumerSecret(properties.getProperty("consumer_secret"))
+			.setOAuthAccessToken(prop.getProperty("token")) 
+			.setOAuthAccessTokenSecret(prop.getProperty("token_secret")) 
+			.setOAuthConsumerKey(prop.getProperty("consumer_key")) 
+			.setOAuthConsumerSecret(prop.getProperty("consumer_secret"))
 			.setUseSSL(true);
 		return new TwitterFactory(confbuilder.build()).getInstance();		
 	}
