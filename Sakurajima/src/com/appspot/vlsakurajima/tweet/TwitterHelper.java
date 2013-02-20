@@ -61,9 +61,9 @@ public class TwitterHelper {
 			ResponseList<Status> statuses;
 			if(sinceId != null) {
 				Paging paging = new Paging(sinceId);
-				statuses = twitter.getMentions(paging);
+				statuses = twitter.getMentionsTimeline(paging);
 			} else {
-				statuses = twitter.getMentions();
+				statuses = twitter.getMentionsTimeline();
 			}
 			
 			//どこまでMentionを取得したのかを記録する
