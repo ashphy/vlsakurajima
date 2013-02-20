@@ -1,7 +1,10 @@
 package com.appspot.vlsakurajima.tweet;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Properties;
 
 import com.appspot.vlsakurajima.info.Setting;
 
@@ -15,20 +18,6 @@ import twitter4j.conf.ConfigurationBuilder;
 
 
 public class TwitterHelper {
-	
-	public static final String CONSUMER_KEY = "TZWccaVTgnAKKlq8alwHWQ";
-	public static final String CONSUMER_SECRET = "4naGHTEhxoXPHDhFXyrx0wgm4hl0jpqqLVNZifV78Gg";
-
-	//Debug Consumer key
-	//public static final String CONSUMER_KEY = "eVOvfjUxQlqOSlg250FEuA";
-	//public static final String CONSUMER_SECRET = "Q4IQJjo8A7wV9AnYfmPgUdPEpk9D6DCVSmzQzPVKE";
-	
-	public static final String TOKEN = "220313791-vIeZW0G3DvuZb0XZSIidl4lVBz5oXZOtDZlzegcN";
-	public static final String TOKEN_SECRET = "vxD3ScTxiOvJvz9sBxO7oux1tr5bEc6agjyFnvxqQc";
-	
-	//Debug Token Sakurajima Dev
-	//public static final String TOKEN = "227506603-n1rPEkkSMqZePULjjUF5Ee9q0OHygMzY3T3S3B6R";
-	//public static final String TOKEN_SECRET = "1tyJ1oCRhir8awqz1XM6364bVevHlKvYaEBBz5tdvY";
 	
 	/**
 	 * Tweetする
@@ -104,12 +93,30 @@ public class TwitterHelper {
 	 * @return
 	 */
 	public static Twitter getTwitter() {
+		
+		Properties properties = new Properties();
+		InputStream in = null;
+		try{
+			in = TwitterHelper.class.getResourceAsStream("twitter_account.properties");
+			properties.load(in);
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		ConfigurationBuilder confbuilder = new ConfigurationBuilder(); 
 		confbuilder
-			.setOAuthAccessToken(TOKEN) 
-			.setOAuthAccessTokenSecret(TOKEN_SECRET) 
-			.setOAuthConsumerKey(CONSUMER_KEY) 
-			.setOAuthConsumerSecret(CONSUMER_SECRET)
+			.setOAuthAccessToken(properties.getProperty("token")) 
+			.setOAuthAccessTokenSecret(properties.getProperty("token_secret")) 
+			.setOAuthConsumerKey(properties.getProperty("consumer_key")) 
+			.setOAuthConsumerSecret(properties.getProperty("consumer_secret"))
 			.setUseSSL(true);
 		return new TwitterFactory(confbuilder.build()).getInstance();		
 	}
