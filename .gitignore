@@ -43,3 +43,7 @@ local.properties
 *.jar
 *.war
 *.ear
+
+#Setting Properties
+bitly.properties
+twitter_account.properties
