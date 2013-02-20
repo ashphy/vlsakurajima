@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +20,7 @@ import twitter4j.Status;
 import com.appspot.vlsakurajima.PMF;
 import com.appspot.vlsakurajima.info.EruptInfo;
 import com.appspot.vlsakurajima.info.EruptionType;
+import com.appspot.vlsakurajima.utils.PropertiesUtil;
 import com.rosaloves.bitlyj.Bitly;
 import com.rosaloves.bitlyj.Bitly.Provider;
 import com.rosaloves.bitlyj.Url;
@@ -29,9 +31,6 @@ import com.rosaloves.bitlyj.Url;
  */
 public class MessageBuilder {
 
-	public static final String BITLY_USERNAME = "sakurajimavolcano";
-	public static final String BITLY_APIKEY = "R_a4f973892e6e621aa0357f89a6647511";
-		
 	/**
 	 * メッセージの検証結果
 	 */
@@ -77,7 +76,8 @@ public class MessageBuilder {
 	}
 	
 	public static String getShotURL(String url) {
-		Provider provider = Bitly.as(BITLY_USERNAME, BITLY_APIKEY);
+		Properties prop = PropertiesUtil.getProperiesFromResource("/com/appspot/vlsakurajima/tweet/bitly.properties");
+		Provider provider = Bitly.as(prop.getProperty("bitly_username"), prop.getProperty("bitly_apikey"));
 		Url shortenURL = provider.call(Bitly.shorten(url));
 		return shortenURL.getShortUrl();
 	}
