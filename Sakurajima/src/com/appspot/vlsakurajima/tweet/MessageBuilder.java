@@ -16,6 +16,7 @@ import javax.jdo.Query;
 
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.User;
 
 import com.appspot.vlsakurajima.PMF;
 import com.appspot.vlsakurajima.info.EruptInfo;
@@ -86,9 +87,9 @@ public class MessageBuilder {
 	 * 新しいメッセージを保存する
 	 * @param message 新規メッセージ
 	 */
-	public static boolean saveMessage(String message) {
+	public static boolean saveMessage(String message, User user) {
 		if(validateMessage(message)) {
-			Message m = new Message(message, 0);
+			Message m = new Message(message, user, 0);
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			try {
 				pm.makePersistent(m);
@@ -130,7 +131,7 @@ public class MessageBuilder {
 			Matcher m = p.matcher(status.getText());
 			if(m.matches()) {
 				//メッセージの保存
-				if(saveMessage(m.group(2))) {
+				if(saveMessage(m.group(2), status.getUser())) {
 					//確認DMの送信
 					String message = "メッセージ追加ありがとう！ 「" + m.group(2) + "」を追加したよ。";
 					TwitterHelper.sendDM(status.getUser().getScreenName(), message);

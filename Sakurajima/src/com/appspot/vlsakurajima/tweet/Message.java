@@ -8,6 +8,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import twitter4j.User;
+
 /**
  * ツイート用のメッセージ
  * @author ashphy
@@ -30,11 +32,21 @@ public class Message implements Comparable<Message> {
 	/** 作成日 */
 	@Persistent
 	private Date created;
+
+	@Persistent
+	private String authorScreenName;
 	
-	public Message(String message, int publishedCount) {
+	@Persistent
+	private Long authorId = 0L;
+	
+	public Message(String message, User user, int publishedCount) {
 		this.message = message;
 		this.publishedCount = publishedCount;
 		this.created = new Date();
+		if(user != null) {
+			this.authorId = user.getId();
+			this.authorScreenName = user.getScreenName();
+		}
 	}
 	
 	/**
@@ -69,11 +81,32 @@ public class Message implements Comparable<Message> {
 		return created;
 	}
 
+	public String getAuthorScreenName() {
+		return authorScreenName;
+	}
+
+	public void setAuthorScreenName(String authorScreenName) {
+		this.authorScreenName = authorScreenName;
+	}
+
+	public long getAuthorId() {
+		if(authorId != null) {
+			return authorId;
+		}
+		
+		return -1L;
+	}
+
+	public void setAuthorId(long authorId) {
+		this.authorId = authorId;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", message=" + message
 				+ ", publishedCount=" + publishedCount + ", created=" + created
-				+ "]";
+				+ ", authorScreenName=" + authorScreenName + ", authorId="
+				+ authorId + "]";
 	}
 
 	@Override
