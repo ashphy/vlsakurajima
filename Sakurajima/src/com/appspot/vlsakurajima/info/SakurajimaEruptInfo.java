@@ -1,14 +1,10 @@
 package com.appspot.vlsakurajima.info;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,6 +14,8 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.appspot.vlsakurajima.utils.AutoEncodeDetectReader;
 
 /**
  * 桜島噴火情報取得クラス
@@ -46,7 +44,6 @@ public class SakurajimaEruptInfo {
 			String[] htmls = fetch();
 			List<String> newInfos = excludeOldInfo(parseEruptInfoURLList(htmls));
 			for (String url : newInfos) {
-				log.info("New Info URL: " + url);
 				EruptInfo info = EruptInfo.getInsranceFromURL(url);
 				if(info != null) {
 					list.add(info);
@@ -114,8 +111,7 @@ public class SakurajimaEruptInfo {
 		
 		//前回の最終取得日時を取得して、
 		Date lastModified = getLastModified();
-		log.info("Last Modified is " + lastModified.toString()
-				);
+
 		// Sun, 12 Dec 2010 15:04:55 GMT
 		DateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 		df.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -128,24 +124,9 @@ public class SakurajimaEruptInfo {
 		if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             //最終取得日時を更新
             saveLastModified(new Date(connection.getLastModified()));
-			
-            String encoding = connection.getContentEncoding();
-            if(encoding == null) {
-            	//encoding = "EUC_JP";
-            	encoding = "sjis";
-            }
-            log.info("Detected encode is " + encoding);
-            
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName(encoding)));
-            String line;
-            List<String> results = new ArrayList<String>();
-            
-            while ((line = in.readLine()) != null) {
-            	results.add(line);
-            }
-            
-            log.info("Fetch pages's LoC is " + results.size());
-            return results.toArray(new String[0]);
+
+            String body = AutoEncodeDetectReader.getAsString(connection.getInputStream());
+            return body.split("\n");
             
 		} else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
 			// no op
