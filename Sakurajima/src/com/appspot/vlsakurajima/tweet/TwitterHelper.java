@@ -3,6 +3,7 @@ package com.appspot.vlsakurajima.tweet;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import com.appspot.vlsakurajima.info.Setting;
 import com.appspot.vlsakurajima.utils.PropertiesUtil;
@@ -18,6 +19,8 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterHelper {
 	
+	private static Logger log = Logger.getLogger(TwitterHelper.class.getName());
+	
 	/**
 	 * Tweetする
 	 * @param tweet
@@ -28,7 +31,7 @@ public class TwitterHelper {
 		try {
 			twitter.updateStatus(tweet);
 		} catch (TwitterException e) {
-			//TODO Add retry queue
+			log.warning(e.getErrorMessage());
 			e.printStackTrace();
 		}
 	}
@@ -43,7 +46,7 @@ public class TwitterHelper {
 		try {
 			twitter.sendDirectMessage(screenName, text);
 		} catch (TwitterException e) {
-			//TODO Add retry queue
+			log.warning(e.getErrorMessage());
 			e.printStackTrace();
 		}
 	}
@@ -81,6 +84,7 @@ public class TwitterHelper {
 			
 			return statuses;
 		} catch (TwitterException e) {
+			log.warning(e.getErrorMessage());
 			e.printStackTrace();
 		}
 		

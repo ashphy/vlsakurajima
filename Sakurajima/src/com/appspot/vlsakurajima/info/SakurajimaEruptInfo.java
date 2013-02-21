@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,8 @@ public class SakurajimaEruptInfo {
 	/** 噴火に関する火山観測報のページ */
 	private static final String JMA_URL = "http://www.seisvol.kishou.go.jp/tokyo/STOCK/volinfo/gensho.html";
 	
+	private Logger log = Logger.getLogger(this.getClass().getName());
+	
 	public SakurajimaEruptInfo() {
 	}
 	
@@ -36,12 +39,14 @@ public class SakurajimaEruptInfo {
 	 * @return 噴火情報
 	 */
 	public List<EruptInfo> getNewInfo() {
+		log.info("getNewInfo()");
 		List<EruptInfo> list = new LinkedList<EruptInfo>();
 		
 		try {
 			String[] htmls = fetch();
 			List<String> newInfos = excludeOldInfo(parseEruptInfoURLList(htmls));
 			for (String url : newInfos) {
+				log.info("New Info URL: " + url);
 				EruptInfo info = EruptInfo.getInsranceFromURL(url);
 				if(info != null) {
 					list.add(info);
@@ -49,6 +54,7 @@ public class SakurajimaEruptInfo {
 			}
 			Collections.sort(list);
 		} catch (IOException e) {
+			log.severe("getNewInfo - " + e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -62,9 +68,11 @@ public class SakurajimaEruptInfo {
 	 */
 	private List<String> excludeOldInfo(List<String> list) {
 		String lastEruptInfoURL = getLastEruptInfoURL();
+		log.info("lastEruptInfoURL is " + lastEruptInfoURL);
 		
 		for (int i = 0; i < list.size(); i++) {
 			if(lastEruptInfoURL.compareTo(list.get(i)) >= 0) {
+				log.info("Remove old erupt info at" + i);
 				list.remove(i);
 				i--;
 			}
@@ -106,11 +114,14 @@ public class SakurajimaEruptInfo {
 		
 		//前回の最終取得日時を取得して、
 		Date lastModified = getLastModified();
+		log.info("Last Modified is " + lastModified.toString()
+				);
 		// Sun, 12 Dec 2010 15:04:55 GMT
 		DateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 		df.setTimeZone(TimeZone.getTimeZone("GMT"));
 
 		if(lastModified != null) {
+			log.info("Set If-Modified-Since");
 			connection.setRequestProperty("If-Modified-Since", df.format(lastModified));
 		}
 
@@ -120,8 +131,10 @@ public class SakurajimaEruptInfo {
 			
             String encoding = connection.getContentEncoding();
             if(encoding == null) {
-            	encoding = "EUC_JP";
+            	//encoding = "EUC_JP";
+            	encoding = "sjis";
             }
+            log.info("Detected encode is " + encoding);
             
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName(encoding)));
             String line;
@@ -131,14 +144,15 @@ public class SakurajimaEruptInfo {
             	results.add(line);
             }
             
+            log.info("Fetch pages's LoC is " + results.size());
             return results.toArray(new String[0]);
             
 		} else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
 			// no op
-			System.out.println("Not modified");
+			log.info("Not modified");
 		} else {
-			System.out.println(connection.getResponseCode());
-			System.out.println(connection.getResponseMessage());
+			log.info(String.valueOf(connection.getResponseCode()));
+			log.info(connection.getResponseMessage());
 			//通信エラー
 			throw new IOException(connection.getResponseMessage());
 		}
