@@ -2,6 +2,19 @@
 Thumbs.db
 ehthumbs.db
 
+#OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashesa
+
 # Folder config file
 Desktop.ini
 

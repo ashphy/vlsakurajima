@@ -34,7 +34,7 @@ public class MessageBuilderTest {
 	@Test
 	public void testGetShotURL() {
 		String shortURL = MessageBuilder.getShotURL("http://ashphy.com/");
-		assertThat("http://bit.ly/Ya9pCK", is(shortURL));
+		assertThat(shortURL, is("http://bit.ly/cmVEVO"));
 	}
 
 	@Test
