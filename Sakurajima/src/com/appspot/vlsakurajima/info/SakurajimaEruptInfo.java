@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.appspot.vlsakurajima.utils.AutoEncodeDetectReader;
+import com.appspot.vlsakurajima.utils.MailLogger;
 
 /**
  * 桜島噴火情報取得クラス
@@ -51,8 +52,8 @@ public class SakurajimaEruptInfo {
 			}
 			Collections.sort(list);
 		} catch (IOException e) {
-			log.severe("getNewInfo - " + e.getMessage());
-			e.printStackTrace();
+			log.severe("GetNewInfo - " + e.getMessage());
+			MailLogger.getLogger().severe("GetNewInfo - " + e.getMessage());
 		}
 		
 		return list;
@@ -88,6 +89,11 @@ public class SakurajimaEruptInfo {
 	 * @return 各噴火情報へのURL一覧
 	 */
 	private List<String> parseEruptInfoURLList(String[] html) {
+		if(html == null || html.length == 0) {
+			MailLogger.getLogger().severe("HTML for #parseEruptInfoURLList is empty or null: " + html);
+			return Collections.emptyList();
+		}
+		
 		final Pattern p = Pattern.compile("href=\"\\./(.*)\".*桜島");
 		List<String> list = new LinkedList<String>();
 		for (int i = 0; i < html.length; i++) {
@@ -95,6 +101,10 @@ public class SakurajimaEruptInfo {
 			if(m.find()) {
 				list.add(m.group(1));
 			} 
+		}
+		
+		if(list.size() == 0) {
+			MailLogger.getLogger().severe("Parsed erupt info for sakurajima is empty: " + html.toString());
 		}
 		
 		return list;
@@ -132,8 +142,10 @@ public class SakurajimaEruptInfo {
 			// no op
 			log.info("Not modified");
 		} else {
-			log.info(String.valueOf(connection.getResponseCode()));
-			log.info(connection.getResponseMessage());
+			log.severe(String.valueOf(connection.getResponseCode()));
+			log.severe(connection.getResponseMessage());
+			MailLogger.getLogger().severe("Fetched for " + JMA_URL + "caught network error with " + String.valueOf(connection.getResponseCode()) + " of " + connection.getResponseMessage());
+			
 			//通信エラー
 			throw new IOException(connection.getResponseMessage());
 		}
