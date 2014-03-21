@@ -26,7 +26,7 @@ import com.appspot.vlsakurajima.utils.MailLogger;
 public class SakurajimaEruptInfo {
 	
 	/** 噴火に関する火山観測報のページ */
-	private static final String JMA_URL = "http://www.seisvol.kishou.go.jp/tokyo/STOCK/volinfo/gensho.html";
+	private static final String JMA_URL = "http://www.data.jma.go.jp/svd/vois/data/tokyo/STOCK/volinfo/gensho.html";
 	
 	private Logger log = Logger.getLogger(this.getClass().getName());
 	

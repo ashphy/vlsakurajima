@@ -27,7 +27,7 @@ public class EruptInfo implements Serializable, Comparable<EruptInfo> {
 	
 	private static final long serialVersionUID = 975703356517696628L;
 
-	public static final String BASE_URL = "http://www.seisvol.kishou.go.jp/tokyo/STOCK/volinfo/";
+	public static final String BASE_URL = "http://www.data.jma.go.jp/svd/vois/data/tokyo/STOCK/volinfo/";
 	
 	/** 火山名 */
 	private final String mountName;
@@ -133,7 +133,7 @@ public class EruptInfo implements Serializable, Comparable<EruptInfo> {
 			HttpURLConnection connection = (HttpURLConnection) detailedPageUrl.openConnection();
 			
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("SJIS")));
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("UTF8")));
 	            String line;
 	            List<String> results = new ArrayList<String>();
 	            

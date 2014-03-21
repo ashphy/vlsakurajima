@@ -104,8 +104,7 @@ public class TwitterHelper {
 			.setOAuthAccessToken(prop.getProperty("token")) 
 			.setOAuthAccessTokenSecret(prop.getProperty("token_secret")) 
 			.setOAuthConsumerKey(prop.getProperty("consumer_key")) 
-			.setOAuthConsumerSecret(prop.getProperty("consumer_secret"))
-			.setUseSSL(true);
+			.setOAuthConsumerSecret(prop.getProperty("consumer_secret"));
 		return new TwitterFactory(confbuilder.build()).getInstance();		
 	}
 }
